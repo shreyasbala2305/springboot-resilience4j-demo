@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: springboot-resilience4j-demo
@@ -6,11 +7,35 @@ server:
   port: 8080
 
 resilience4j:
-      timelimiter:
-        instances:
-          doctorService:
-            timeout-duration: 2s
-            cancel-running-future: true	
+  timelimiter:
+    instances:
+      doctorService:
+        timeout-duration: 2s
+        cancel-running-future: true
+
+  retry:
+    instances:
+      doctorServiceRetry:
+        max-attempts: 3
+        wait-duration: 1s
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - java.lang.RuntimeException
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
+
+  circuitbreaker:
+    instances:
+      doctorServiceCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
 
 management:
   endpoints:
@@ -20,3 +45,6 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

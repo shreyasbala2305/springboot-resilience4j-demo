@@ -23,4 +23,34 @@ public class DoctorController {
     ) {
         return doctorService.getDoctor(doctorId, delayMs);
     }
+    
+    @GetMapping("/{doctorId}/retry")
+    public DoctorResponse getDoctorWithRetry(
+            @PathVariable Long doctorId,
+            @RequestParam(defaultValue = "2") int failuresBeforeSuccess
+    ) {
+        return doctorService.getDoctorWithRetry(
+                doctorId,
+                failuresBeforeSuccess
+        );
+    }
+    
+    @GetMapping("/{doctorId}/circuit-breaker")
+    public DoctorResponse getDoctorWithCircuitBreaker(
+            @PathVariable Long doctorId,
+            @RequestParam(defaultValue = "1000") long delayMs
+    ) {
+        return doctorService.getDoctorWithCircuitBreaker(doctorId, delayMs);
+    }
+    
+    @GetMapping("/{doctorId}/circuit-breaker/test")
+    public DoctorResponse testCircuitBreaker(
+            @PathVariable Long doctorId,
+            @RequestParam(defaultValue = "false") boolean shouldFail
+    ) {
+        return doctorService.getDoctorWithControlledFailure(
+                doctorId,
+                shouldFail
+        );
+    }
 }
